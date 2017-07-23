@@ -29,14 +29,14 @@ typedef struct {
 } BigInt;
 
 /**
- *	@fn init(BigInt *arg)
+ *	@fn init(BigInt * const arg)
  *	Initializes BigInt arg with zeroes.
  *	It is called automatically within getBigInt(), but
  *	you may also call it to clear the value of your
  *	BigInt.
  *	@see getBigInt()
  */
-extern void			init(BigInt *arg);
+extern void			init(BigInt * const arg);
 
 /**
  *	@fn getBigInt()
@@ -53,71 +53,78 @@ extern void			init(BigInt *arg);
 extern BigInt	   *getBigInt();
 
 /**
- *	@fn freeBigInt(BigInt *target)
+ *	@fn freeBigInt(BigInt * const target)
  *	Frees memory taken by BigInt target.
  *	freeBigInt() is nothing much but a free() wrapper,
  *	really. Nothing to see here.
  *	@see getBigInt()
  */
-extern void			freeBigInt(BigInt *target);
+extern void			freeBigInt(BigInt * const target);
 
 /**
- *	@fn copy(BigInt *dest, BigInt *src)
+ *	@fn copy(BigInt * const dest, const BigInt *src)
  *	Copies BigInt src into dest.
  *	copy() is pretty much a memcpy() wrapper.
  */
-extern void			copy(BigInt *dest, BigInt *src);
+extern void			copy(BigInt * const dest, const BigInt *src);
 
 /**
- *	@fn add(BigInt *target, BigInt *arg)
+ *	@fn add(BigInt * const target, const BigInt *arg)
  *	Adds arg to target.
  *	Remember that the function modifies the actual
  *	target! All BigInts are passed by reference.
  */
-extern void			add(BigInt *target, BigInt *arg);
+extern void			add(BigInt * const target, const BigInt *arg);
 
 /**
- *	@fn shiftLeft(BigInt *target, uint64_t arg)
+ *	@fn comp(const BigInt *target, const BigInt *arg)
+ *	Compares target with arg.
+ *	Will return 1 if target is greater than arg; -1
+ *	if target is smaller than arg; and 0 if target
+ *	and arg are equal.
+ *	@return 1, -1 or 0.
+ */
+extern int			comp(const BigInt *target, const BigInt *arg);
+
+/**
+ *	@fn shiftLeft(BigInt * const target, const uint64_t arg)
  *	Performs an arithmetical left shift by arg positions.
  *	The shift only works within 64 bits; it is not
  *	designed to handle larger shifts. 
  *	@see shiftRight()
  */
-extern void			shiftLeft(BigInt *target, uint64_t arg);
+extern void			shiftLeft(BigInt * const target, const uint64_t arg);
 
 /**
- *	@fn shiftRight(BigInt *target, uint64_t arg)
+ *	@fn shiftRight(BigInt * const target, const uint64_t arg)
  *	Performs an arithmetical right shift by arg positions.
  *	The shift only works within 64 bits; it is not
  *	designed to handle larger shifts.
  *	@see shiftLeft()
  */
-extern void			shiftRight(BigInt *target, uint64_t arg);
+extern void			shiftRight(BigInt * const target, const uint64_t arg);
 
 /**
- *	@fn setBit(BigInt *target, uint64_t index)
+ *	@fn setBit(BigInt * const target, uint64_t index)
  *	Sets a bit number index to 1.
  *	index is a human-readable position, starting with 1.
  *	@see unsetBit()
  */
-extern void			setBit(BigInt *target, uint64_t index);
+extern void			setBit(BigInt * const target, uint64_t index);
 
 /**
- *	@fn unsetBit(BigInt *target, uint64_t index)
+ *	@fn unsetBit(BigInt * const target, uint64_t index)
  *	Sets a bit number index to 0.
  *	index is a human-readable position, starting with 1.
- *	unsetBit() also ignores usedDigits variable, so use
- *	with care.
  *	@see setBit()
  */
-extern void			unsetBit(BigInt *target, uint64_t index);
+extern void			unsetBit(BigInt * const target, uint64_t index);
 
 /**
- *	@fn outputBinary(BigInt *target, uint64_t digits, char *buf)
+ *	@fn outputBinary(const BigInt *target, const uint64_t digits, char *buf)
  *	Writes digits least significant bits from target into C string buf.	
  *	This function does not perform any memory checks.
  *	Make sure that buf is at least digits+1 bytes long,
  *	or the behavior of this function may be hazardous.
- *	However, it will never output more than usedDigits.
  */
-extern void			outputBinary(BigInt *target, uint64_t digits, char *buf);
+extern void			outputBinary(const BigInt *target, const uint64_t digits, char * const buf);

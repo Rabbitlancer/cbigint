@@ -40,6 +40,15 @@ int main(int argc, char *argv[]) {
 	outputBinary(val, 90, output);
 	printf("%s\n", output);
 
+	unsetBit(val, 68);
+	unsetBit(val, 3);
+	outputBinary(val, 90, output);
+	printf("%s\n", output);
+
+	printf("%d\n", comp(val, val2));
+	printf("%d\n", comp(val2, val));
+	printf("%d\n", comp(val, val));
+
 	freeBigInt(val);
 	freeBigInt(val2);
 

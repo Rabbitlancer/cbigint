@@ -6,8 +6,9 @@
 
 #define BLOCKSIZE 64
 #define OVERFLOWMARK 0x7FFFFFFFFFFFFFFFL
+#define ALLBITS 0xFFFFFFFFFFFFFFFFL
 
-static uint64_t bits[64] = 
+static const uint64_t bits[64] = 
 {
 	0x0000000000000001L, 0x0000000000000002L,
 	0x0000000000000004L, 0x0000000000000008L,
@@ -44,7 +45,7 @@ static uint64_t bits[64] =
 };
 
 
-void init(BigInt *arg) {
+void init(BigInt * const arg) {
 	arg->usedDigits = 0;
 
 	for (int i = 0; i<MAXBLOCKS; ++i) {
@@ -60,15 +61,15 @@ BigInt *getBigInt() {
 	return res;
 }
 
-void freeBigInt(BigInt *target) {
+void freeBigInt(BigInt * const target) {
 	free(target);
 }
 
-void copy(BigInt *dest, BigInt *src) {
+void copy(BigInt * const dest, const BigInt *src) {
 	memcpy(dest, src, sizeof(BigInt));
 }
 
-void add(BigInt *target, BigInt *arg) {
+void add(BigInt * const target, const BigInt *arg) {
 	uint32_t blocks;
 
 	if (target->usedDigits > arg->usedDigits) {
@@ -99,14 +100,33 @@ void add(BigInt *target, BigInt *arg) {
 	}
 }
 
-void shiftLeft(BigInt *target, uint64_t arg) {
+int comp(const BigInt *target, const BigInt *arg) {
+	if (target->usedDigits > arg->usedDigits) {
+		return 1;
+	}
+
+	if (target->usedDigits < arg->usedDigits) {
+		return -1;
+	}
+
+	for (int32_t block = target->usedDigits / BLOCKSIZE;
+				 block >= 0;
+			   --block) {
+		if (target->value[block] > arg->value[block]) return 1;
+		if (target->value[block] < arg->value[block]) return -1;		
+	}
+
+	return 0;
+}
+
+void shiftLeft(BigInt * const target, const uint64_t arg) {
 	uint64_t antiarg = BLOCKSIZE - arg;
 
 	uint64_t carry = 0L;
 	uint64_t temp = 0L;
 
 	int32_t blocks;
-	blocks = target->usedDigits / 64 + 2;
+	blocks = target->usedDigits / BLOCKSIZE + 2;
 
 	for (int32_t i = 0; i<blocks; ++i) {
 		temp = target->value[i];
@@ -118,14 +138,14 @@ void shiftLeft(BigInt *target, uint64_t arg) {
 	target->usedDigits += arg;
 }
 
-void shiftRight(BigInt *target, uint64_t arg) {
+void shiftRight(BigInt * const target, const uint64_t arg) {
 	uint64_t antiarg = BLOCKSIZE - arg;
 
 	uint64_t carry = 0L;
 	uint64_t temp = 0L;
 
 	int32_t blocks;
-	blocks = target->usedDigits / 64 + 2;
+	blocks = target->usedDigits / BLOCKSIZE + 2;
 
 	for (int32_t i = blocks; i>=0; --i) {
 		temp = target->value[i];
@@ -137,7 +157,7 @@ void shiftRight(BigInt *target, uint64_t arg) {
 	target->usedDigits -= arg;
 }
 
-void setBit(BigInt *target, uint64_t index) {
+void setBit(BigInt * const target, uint64_t index) {
 	--index;
 
 	if (index > target->usedDigits) {
@@ -150,16 +170,39 @@ void setBit(BigInt *target, uint64_t index) {
 	target->value[block] |= bits[index];
 }
 
-void unsetBit(BigInt *target, uint64_t index) {
+void unsetBit(BigInt * const target, uint64_t index) {
 	--index;
+
+	uint8_t reuseFlag = 0;
+	if (index == target->usedDigits) {
+		reuseFlag = 1;
+	}
 
 	uint64_t block = index / BLOCKSIZE;
 	index %= BLOCKSIZE;
 
-	target->value[block] &= !bits[index];
+	target->value[block] &= ALLBITS - bits[index];
+
+	if (reuseFlag) {
+		uint64_t cur = target->value[block];
+
+		while (cur - bits[index] > OVERFLOWMARK) {
+			if (index) {
+				--index;
+			} else if (block) {
+				index = 63;
+				--block;
+				cur = target->value[block];
+			} else {
+				break;
+			}
+		}
+
+		target->usedDigits = BLOCKSIZE*block + index;
+	}
 }
 
-void outputBinary(BigInt *target, uint64_t digits, char *buf) {
+void outputBinary(const BigInt *target, const uint64_t digits, char * const buf) {
 	uint64_t blocks = digits / BLOCKSIZE + 1;
 
 	uint64_t cur;
