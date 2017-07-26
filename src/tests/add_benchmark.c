@@ -1,15 +1,7 @@
 #include <bigint.h>
 
 #include <stdio.h>
-#include <time.h>
-
-#define START_BENCHMARK(x)	count = 0;\
-							start = clock(); \
-							while (count<x) {
-
-#define END_BENCHMARK		} \
-							end = clock(); \
-							printf("Took %fs to complete.\n", (double) (end-start)/CLOCKS_PER_SEC);
+#include <time.h>	
 
 int main(int argc, char *argv[]) {
 	BigInt *val, *val2;
@@ -23,10 +15,15 @@ int main(int argc, char *argv[]) {
 
 	printf("Testing 1B additions... now\n");
 
-	START_BENCHMARK(1000000000)
+	count = 0;
+	start = clock(); 
+	while (count<1000000000) {
 		add(val, val2);
 		++count;
-	END_BENCHMARK
+	} 
+	
+	end = clock(); 
+	printf("Took %fs to complete.\n", (double) (end-start)/CLOCKS_PER_SEC);
 
 	freeBigInt(val);
 	freeBigInt(val2);
