@@ -109,6 +109,7 @@ extern void			shiftRight(BigInt * const target, const uint64_t arg);
  *	Sets a bit number index to 1.
  *	index is a human-readable position, starting with 1.
  *	@see unsetBit()
+ *	@see testBit()
  */
 extern void			setBit(BigInt * const target, uint64_t index);
 
@@ -117,8 +118,20 @@ extern void			setBit(BigInt * const target, uint64_t index);
  *	Sets a bit number index to 0.
  *	index is a human-readable position, starting with 1.
  *	@see setBit()
+ *	@see testBit()
  */
 extern void			unsetBit(BigInt * const target, uint64_t index);
+
+/**
+ *	@fn testBit(BigInt * const target, uint64_t index)
+ *	Tests whether a bit number index is set or not.
+ *	index is a human-readable position, starting with 1.
+ *	Returns the value of select bit.
+ *	@see setBit()
+ *	@see unsetBit()
+ *	@return 1 if the bit index is set, otherwise 0.
+ */
+extern int			testBit(BigInt * const target, uint64_t index);
 
 /**
  *	@fn outputBinary(const BigInt *target, const uint64_t digits, char *buf)

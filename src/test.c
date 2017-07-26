@@ -2,6 +2,10 @@
 
 #include <stdio.h>
 
+#define PRINT(x) 	outputBinary(x, 75, output);\
+					printf("%s\n", output); \
+					printf("%d\n", x->usedDigits);
+
 int main(int argc, char *argv[]) {
 	BigInt *val;
 
@@ -11,43 +15,49 @@ int main(int argc, char *argv[]) {
 
 	char output[100];
 
-	outputBinary(val, 90, output);
-	printf("%s\n", output);
+	PRINT(val)
 
 	setBit(val, 1);
 
 	shiftLeft(val, 2);
-	outputBinary(val, 90, output);
-	printf("%s\n", output);
+	PRINT(val)
 
 	BigInt *val2 = getBigInt();
 	copy(val2, val);
 	setBit(val2, 64);
 
 	shiftRight(val, 3);
-	outputBinary(val, 90, output);
-	printf("%s\n", output);
+	PRINT(val)
 
 	add(val, val2);
-	outputBinary(val, 90, output);
-	printf("%s\n", output);
+	PRINT(val)
 
 	add(val, val2);
-	outputBinary(val, 90, output);
-	printf("%s\n", output);
+	PRINT(val)
 
 	shiftRight(val, 1);
-	outputBinary(val, 90, output);
-	printf("%s\n", output);
+	PRINT(val)
 
 	unsetBit(val, 68);
 	unsetBit(val, 3);
-	outputBinary(val, 90, output);
-	printf("%s\n", output);
+	PRINT(val)
 
 	printf("%d\n", comp(val, val2));
 	printf("%d\n", comp(val2, val));
 	printf("%d\n", comp(val, val));
+
+	PRINT(val)
+
+	unsetBit(val, val->usedDigits+1);
+	PRINT(val)
+
+	printf("%d\n", testBit(val,72));
+
+	BigInt *oftest = getBigInt();
+	setBit(oftest, 64);
+	add(oftest, oftest);
+	PRINT(oftest)
+	freeBigInt(oftest);
 
 	freeBigInt(val);
 	freeBigInt(val2);
