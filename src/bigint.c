@@ -292,6 +292,57 @@ extern int testBit(BigInt * const target, uint64_t index) {
 	return res;
 }
 
+void setBitNative(BigInt * const target, uint64_t index) {
+	if (index > target->usedDigits) {
+		target->usedDigits = index;
+	}
+	
+	uint64_t block = index / BLOCKSIZE;
+	index %= BLOCKSIZE;
+
+	target->value[block] |= bits[index];
+}
+
+void unsetBitNative(BigInt * const target, uint64_t index) {
+	uint8_t reuseFlag = 0;
+	if (index == target->usedDigits) {
+		reuseFlag = 1;
+	}
+
+	uint64_t block = index / BLOCKSIZE;
+	index %= BLOCKSIZE;
+
+	target->value[block] &= inverseBits[index];
+
+	if (reuseFlag) {
+		uint64_t cur = target->value[block];
+
+		while (cur - bits[index] > OVERFLOWMARK) {
+			if (index) {
+				--index;
+			} else if (block) {
+				index = 63;
+				--block;
+				cur = target->value[block];
+			} else {
+				break;
+			}
+		}
+
+		target->usedDigits = BLOCKSIZE*block + index;
+	}
+}
+
+extern int testBitNative(BigInt * const target, uint64_t index) {
+	uint64_t block = index / BLOCKSIZE;
+	index %= BLOCKSIZE;
+
+	int res = target->value[block] & bits[index];
+	res >>= index;
+
+	return res;
+}
+
 void outputBinary(const BigInt *target, const uint64_t digits, char * const buf) {
 	uint64_t blocks = digits / BLOCKSIZE + 1;
 

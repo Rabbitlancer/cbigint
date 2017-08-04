@@ -110,6 +110,7 @@ extern void			shiftRight(BigInt * const target, const uint64_t arg);
  *	index is a human-readable position, starting with 1.
  *	@see unsetBit()
  *	@see testBit()
+ *	@see setBitNative()
  */
 extern void			setBit(BigInt * const target, uint64_t index);
 
@@ -119,6 +120,7 @@ extern void			setBit(BigInt * const target, uint64_t index);
  *	index is a human-readable position, starting with 1.
  *	@see setBit()
  *	@see testBit()
+ *	@see unsetBitNative()
  */
 extern void			unsetBit(BigInt * const target, uint64_t index);
 
@@ -129,9 +131,39 @@ extern void			unsetBit(BigInt * const target, uint64_t index);
  *	Returns the value of select bit.
  *	@see setBit()
  *	@see unsetBit()
+ *	@see testBitNative()
  *	@return 1 if the bit index is set, otherwise 0.
  */
 extern int			testBit(BigInt * const target, uint64_t index);
+
+/**
+ *	@fn setBitNative(BigInt * const target, uint64_t index)
+ *	Sets a bit number index to 1.
+ *	index is a machine position, starting with 0.
+ *	@see unsetBitNative()
+ *	@see testBitNative()
+ */
+extern void			setBitNative(BigInt * const target, uint64_t index);
+
+/**
+ *	@fn unsetBit(BigInt * const target, uint64_t index)
+ *	Sets a bit number index to 0.
+ *	index is a machine position, starting with 0.
+ *	@see setBitNative()
+ *	@see testBitNative()
+ */
+extern void			unsetBitNative(BigInt * const target, uint64_t index);
+
+/**
+ *	@fn testBit(BigInt * const target, uint64_t index)
+ *	Tests whether a bit number index is set or not.
+ *	index is a machine position, starting with 0.
+ *	Returns the value of select bit.
+ *	@see setBitNative()
+ *	@see unsetBitNative()
+ *	@return 1 if the bit index is set, otherwise 0.
+ */
+extern int			testBitNative(BigInt * const target, uint64_t index);
 
 /**
  *	@fn outputBinary(const BigInt *target, const uint64_t digits, char *buf)
